@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be mine?</title>
+  <style>
+    :root{--bg1:#0f1724;--bg2:#2b2e4a;--accent:#ff6b81;--accent2:#7ce4ff}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+    body{background:radial-gradient(ellipse at center,var(--bg2) 0%, var(--bg1) 60%);color:#fff;display:flex;align-items:center;justify-content:center;padding:24px}
+    .sky{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+    .star{position:absolute;background:linear-gradient(90deg,#fff,#ffe5f0);width:2px;height:2px;border-radius:50%;opacity:0.9;filter:blur(.4px);animation:twinkle 3s infinite ease-in-out}
+    @keyframes twinkle{0%{opacity:.05;transform:scale(.5)}50%{opacity:1;transform:scale(1.1)}100%{opacity:.05;transform:scale(.5)}}
+    .card{width:100%;max-width:820px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));border-radius:20px;padding:36px;box-shadow:0 10px 40px rgba(2,6,23,0.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.04);position:relative}
+    h1{margin:0 0 12px;font-size:28px;letter-spacing:0.4px}
+    p.lead{margin:0 0 18px;color:#cbd5e1}
+    .poem-box{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .poem{font-style:italic;margin:0;font-size:18px;line-height:1.6;color:#f8fafc}
+    .poem .intro{font-weight:600;margin-bottom:10px;display:block;color:var(--accent2)}
+    .actions{display:flex;gap:12px;margin-top:20px}
+    .btn{padding:12px 18px;border-radius:12px;border:0;font-weight:700;cursor:pointer;font-size:15px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#ff9fb6);color:#1b1220;box-shadow:0 6px 18px rgba(255,107,129,0.18)}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#e6eef8}
+    footer{margin-top:16px;color:#93a3c7;font-size:13px}
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(rgba(2,6,23,0.6), rgba(2,6,23,0.6));backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
+    .modal.open{opacity:1;pointer-events:auto}
+    .modal-card{background:linear-gradient(180deg,#081024,#0e1630);padding:28px;border-radius:14px;max-width:640px;width:92%;text-align:center;border:1px solid rgba(255,255,255,0.03)}
+    .proposal-text{font-size:20px;line-height:1.6;margin:10px 0 18px}
+    .confetti-piece{position:fixed;width:10px;height:14px;opacity:0;pointer-events:none;z-index:60}
+    .thank-you{margin-top:16px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.05);color:#d1d5db;display:none;font-size:15px;line-height:1.4}
+    .no-message{margin-top:16px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.05);color:#d1d5db;font-size:15px;line-height:1.4;display:none;}
+    @media (max-width:520px){h1{font-size:22px}.poem{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <main class="card" role="main">
+    <h1>For Dipsha, who makes the stars wait.</h1>
+    <p class="lead">A small page, one big question from Jeshik Poudel.</p>
+    <div class="poem-box">
+      <p class="poem"><span class="intro">I'll say this</span>
+      Two souls met beyond the reach of time,<br>
+      Where truth wore neither shape nor name.<br>
+      In your eyes, the cosmos learned its rhyme,<br>
+      And love became the reason it became.
+      </p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="openBtn">Open my heart</button>
+    </div>
+    <footer>Made with love — Jeshik Poudel</footer>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div style="font-size:70px;line-height:1;margin:14px auto;">❤️</div>
+      <h2 id="modalTitle">Dipsha, will you be mine?</h2>
+      <p class="proposal-text">With all my heart, Jeshik Poudel.</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:8px;">
+        <button class="btn btn-primary" id="yesBtn">Yes 💖</button>
+        <button class="btn btn-ghost" id="noBtn">No</button>
+        <button class="btn btn-primary" id="whyBtn" style="display:none;">Why?</button>
+      </div>
+      <p class="no-message" id="noMessage">
+        Don't worry, my heart won't break. A man who dreams of you must have a strong heart and body that no other can match, and I will prove myself. Give me another chance.
+      </p>
+      <p class="thank-you" id="thankYou">
+        Thank you for sharing your thoughts with me. I will always remember them and prove myself worthy of your heart.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const sky = document.querySelector('.sky');
+    for(let i=0;i<80;i++){
+      const s = document.createElement('div');
+      s.className='star';
+      const x = Math.random()*100; const y = Math.random()*100; const size = Math.random()*2+1;
+      s.style.left = x+'%'; s.style.top = y+'%'; s.style.width = size+'px'; s.style.height = size+'px';
+      s.style.animationDuration = (2+Math.random()*3)+'s'; s.style.opacity = Math.random();
+      sky.appendChild(s);
+    }
+
+    const modal = document.getElementById('modal');
+    const openBtn = document.getElementById('openBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const whyBtn = document.getElementById('whyBtn');
+    const thankYou = document.getElementById('thankYou');
+    const noMessage = document.getElementById('noMessage');
+
+    openBtn.addEventListener('click',()=>{ modal.classList.add('open'); });
+
+    noBtn.addEventListener('click',()=>{
+      yesBtn.style.display = 'none';
+      noBtn.style.display = 'none';
+      noMessage.style.display = 'block';
+      whyBtn.style.display = 'inline-block';
+    });
+
+    whyBtn.addEventListener('click',()=>{
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLScpFDrOclw21kIOVnMjt1UL8AF3Ur5tKXuz6-u-sEGFwqGKcQ/viewform?usp=header","_blank");
+      thankYou.style.display = 'block';
+      whyBtn.disabled = true;
+    });
+
+    yesBtn.addEventListener('click',()=>{
+      modal.querySelector('#modalTitle').textContent = "You said yes, Dipsha! ❤️";
+      modal.querySelector('.proposal-text').textContent = "I can't stop smiling, Dipsha. Thank you for making me the luckiest person — Jeshik Poudel.";
+      yesBtn.disabled = true;
+      noBtn.style.display = 'none';
+      spawnConfetti(45);
+    });
+
+    function spawnConfetti(amount){
+      for(let i=0;i<amount;i++){
+        const el = document.createElement('div');
+        el.className='confetti-piece';
+        el.style.left = (50 + (Math.random()*80-40)) + '%';
+        el.style.top = Math.random()*30 + '%';
+        el.style.opacity = 1;
+        el.style.background = ['#FF6B81','#FFD97A','#7CE4FF','#A88CFF'][Math.floor(Math.random()*4)];
+        el.style.transform = 'rotate('+Math.random()*360+'deg)';
+        el.style.width = (6 + Math.random()*12) + 'px';
+        el.style.height = (8 + Math.random()*10) + 'px';
+        document.body.appendChild(el);
+        const fall = el.animate([
+          {transform: 'translateY(0) rotate(0deg)', opacity:1},
+          {transform: 'translateY(' + (200 + Math.random()*400) + 'px) rotate(' + (Math.random()*720) + 'deg)', opacity:0}
+        ],{duration: 1800 + Math.random()*1200, easing:'cubic-bezier(.2,.7,.2,1)'});
+        fall.onfinish = ()=>el.remove();
+      }
+    }
+
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==='Escape') modal.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
